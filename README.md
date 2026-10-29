@@ -33,6 +33,6 @@ It needs `protoc` and `pxf`. `protoc-gen-go` is built at the version `go.mod` pi
 
 ## Status
 
-Not released yet. protowire still bundles its own copies of these files, and protocompile still publishes Go code for some of them. The migration, and the decisions still open, are tracked in [#1](https://github.com/trendvidia/protos/issues/1).
+This repository is the canonical home of these files. protowire bundles exact copies under `proto/` and tests that they equal `protos.Files` of the version it pins, so an edit lands here first and reaches protowire when it bumps this module. The migration is tracked in [#1](https://github.com/trendvidia/protos/issues/1).
 
-Until protocompile's `gen/pxf` and `gen/protowire/schema/v1` stop registering these files, a program must not link them together with this module. It panics at startup: `proto: file "pxf/bignum.proto" is already registered`.
+protocompile v0.35.1 and earlier register some of these files from their own `gen/pxf` and `gen/protowire/schema/v1`, so a program must not link those together with this module. It panics at startup: `proto: file "pxf/bignum.proto" is already registered`. Later protocompile releases make both packages aliases of this module (trendvidia/protocompile#271).

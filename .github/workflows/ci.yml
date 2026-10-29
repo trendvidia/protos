@@ -28,7 +28,3 @@ jobs:
           reqs="$(go mod edit -json | python3 -c 'import json,sys; print(" ".join(r["Path"] for r in json.load(sys.stdin).get("Require", [])))')"
           echo "requires: $reqs"
           test "$reqs" = "google.golang.org/protobuf"
-      # Until protowire bundles these files from here (#1, step 5), its
-      # copies still get edited; this fails when the two differ.
-      - name: matches protowire main
-        run: ./scripts/checkdrift.sh
