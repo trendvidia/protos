@@ -1,0 +1,46 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 TrendVidia, LLC.
+
+syntax = "proto3";
+
+package sbe;
+
+import "google/protobuf/descriptor.proto";
+
+option csharp_namespace = "Protowire.Protos.Sbe";
+option go_package = "github.com/trendvidia/protos/sbe;sbe";
+option java_multiple_files = true;
+option java_outer_classname = "AnnotationsProto";
+option java_package = "org.protowire.protos.sbe";
+
+// Extension numbers live in protowire's block in the global extension
+// registry, 1314–1363, granted by protocolbuffers/protobuf#28919; the SBE
+// sub-range is 1319–1326 (STABILITY.md promise 3). Before the block existed
+// these sat at 50100, 50101, 50200, 50300 and 50301, inside an unregistered
+// 50000–59999 squat. That range is retired and must never be reused: a
+// descriptor carrying it predates v1.12 and should be diagnosed as stale
+// rather than read.
+
+extend google.protobuf.FileOptions {
+  // SBE schema identifier. Required on files containing SBE messages.
+  uint32 schema_id = 1319;
+
+  // SBE schema version.
+  uint32 version = 1320;
+}
+
+extend google.protobuf.MessageOptions {
+  // SBE message template identifier. Required on each top-level SBE message.
+  uint32 template_id = 1321;
+}
+
+extend google.protobuf.FieldOptions {
+  // Fixed byte length for string and bytes fields.
+  // Values longer than this are truncated; shorter values are null-padded.
+  uint32 length = 1322;
+
+  // SBE primitive type override. Allows narrowing a proto type to a smaller
+  // SBE encoding, e.g. uint32 -> "uint8". Valid values:
+  // int8, int16, int32, int64, uint8, uint16, uint32, uint64, float, double.
+  string encoding = 1323;
+}

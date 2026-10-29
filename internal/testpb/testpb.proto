@@ -1,0 +1,35 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 TrendVidia, LLC.
+
+// A user schema that imports every shared schema in this repository, built
+// with `pxf build` the way a project would build its own. The tests in
+// internal/check generate nothing; they load this file's generated code
+// and check what a user's generated code gets.
+
+syntax = "proto3";
+
+package protos.test.v1;
+
+import "envelope/v1/envelope.proto";
+import "protowire/schema/v1/annotations.proto";
+import "protowire/schema/v1/descriptor.proto";
+import "protowire/schema/v1/report.proto";
+import "pxf/annotations.proto";
+import "pxf/bignum.proto";
+import "pxf/secret.proto";
+import "sbe/annotations.proto";
+
+option go_package = "github.com/trendvidia/protos/internal/testpb";
+option (sbe.schema_id) = 1;
+
+// Order uses a type, an option or an annotation from each shared schema.
+message Order {
+  string id = 1 [(pxf.required) = true, (sbe.length) = 16];
+  pxf.BigInt quantity = 2;
+  pxf.Decimal price = 3;
+  pxf.Secret token = 4;
+  float discount = 5 @validate(this >= 0.0 && this <= 1.0);
+  envelope.v1.AppError last_error = 6;
+  protowire.schema.v1.Report report = 7;
+  protowire.schema.v1.AnnotationList notes = 8;
+}
