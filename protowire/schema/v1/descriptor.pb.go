@@ -50,8 +50,9 @@ const (
 	//
 	// The compiler checks it (section 5.1, section 8.1): the fragment must
 	// parse under the section 5.4 grammar; every call must resolve to a
-	// visible `function` declaration or be one of the seven builtins (size,
-	// starts_with, ends_with, contains, matches, now, is_nan); a declared
+	// visible `function` declaration or be one of the nine builtins (size,
+	// starts_with, ends_with, contains, matches, now, is_nan, defined,
+	// unique); every other name must resolve to an enum value; a declared
 	// function's arity must match its declaration and a builtin's its
 	// form. So, given `function matches(value: string, pattern: string)`,
 	// `@validate(mathces(this, "^a"))` is a compile error at the call.
@@ -1017,7 +1018,13 @@ type Expression struct {
 	// construction for error attribution.
 	Calls []*FunctionRef `protobuf:"bytes,2,rep,name=calls,proto3" json:"calls,omitempty"`
 	// Position of the expression's opening delimiter in the source file.
-	Location      *SourceLocation `protobuf:"bytes,3,opt,name=location,proto3" json:"location,omitempty"`
+	Location *SourceLocation `protobuf:"bytes,3,opt,name=location,proto3" json:"location,omitempty"`
+	// Enum value references found within this expression (RFC-001 section
+	// 5.4, issue #427), one per distinct spelling, resolved by the compiler
+	// from the annotated declaration's scope. An engine substitutes each
+	// spelling's number and never resolves a name itself; a reference in
+	// `source` with no entry here is a load-time error.
+	EnumValues    []*EnumValueRef `protobuf:"bytes,4,rep,name=enum_values,json=enumValues,proto3" json:"enum_values,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1073,6 +1080,68 @@ func (x *Expression) GetLocation() *SourceLocation {
 	return nil
 }
 
+func (x *Expression) GetEnumValues() []*EnumValueRef {
+	if x != nil {
+		return x.EnumValues
+	}
+	return nil
+}
+
+// EnumValueRef is one enum value reference in an expression: the
+// spelling as written (`MODE_MATCH`, `Mode.MODE_MATCH`) and what it
+// resolved to.
+type EnumValueRef struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Spelling      string                 `protobuf:"bytes,1,opt,name=spelling,proto3" json:"spelling,omitempty"`
+	Value         *EnumLiteral           `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EnumValueRef) Reset() {
+	*x = EnumValueRef{}
+	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EnumValueRef) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EnumValueRef) ProtoMessage() {}
+
+func (x *EnumValueRef) ProtoReflect() protoreflect.Message {
+	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EnumValueRef.ProtoReflect.Descriptor instead.
+func (*EnumValueRef) Descriptor() ([]byte, []int) {
+	return file_protowire_schema_v1_descriptor_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *EnumValueRef) GetSpelling() string {
+	if x != nil {
+		return x.Spelling
+	}
+	return ""
+}
+
+func (x *EnumValueRef) GetValue() *EnumLiteral {
+	if x != nil {
+		return x.Value
+	}
+	return nil
+}
+
 type FunctionRef struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Fqn           string                 `protobuf:"bytes,1,opt,name=fqn,proto3" json:"fqn,omitempty"`
@@ -1083,7 +1152,7 @@ type FunctionRef struct {
 
 func (x *FunctionRef) Reset() {
 	*x = FunctionRef{}
-	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[8]
+	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1095,7 +1164,7 @@ func (x *FunctionRef) String() string {
 func (*FunctionRef) ProtoMessage() {}
 
 func (x *FunctionRef) ProtoReflect() protoreflect.Message {
-	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[8]
+	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1108,7 +1177,7 @@ func (x *FunctionRef) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FunctionRef.ProtoReflect.Descriptor instead.
 func (*FunctionRef) Descriptor() ([]byte, []int) {
-	return file_protowire_schema_v1_descriptor_proto_rawDescGZIP(), []int{8}
+	return file_protowire_schema_v1_descriptor_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *FunctionRef) GetFqn() string {
@@ -1138,7 +1207,7 @@ type FileFunctions struct {
 
 func (x *FileFunctions) Reset() {
 	*x = FileFunctions{}
-	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[9]
+	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1150,7 +1219,7 @@ func (x *FileFunctions) String() string {
 func (*FileFunctions) ProtoMessage() {}
 
 func (x *FileFunctions) ProtoReflect() protoreflect.Message {
-	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[9]
+	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1163,7 +1232,7 @@ func (x *FileFunctions) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FileFunctions.ProtoReflect.Descriptor instead.
 func (*FileFunctions) Descriptor() ([]byte, []int) {
-	return file_protowire_schema_v1_descriptor_proto_rawDescGZIP(), []int{9}
+	return file_protowire_schema_v1_descriptor_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *FileFunctions) GetDeclarations() []*FunctionDecl {
@@ -1189,7 +1258,7 @@ type FunctionDecl struct {
 
 func (x *FunctionDecl) Reset() {
 	*x = FunctionDecl{}
-	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[10]
+	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1201,7 +1270,7 @@ func (x *FunctionDecl) String() string {
 func (*FunctionDecl) ProtoMessage() {}
 
 func (x *FunctionDecl) ProtoReflect() protoreflect.Message {
-	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[10]
+	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1214,7 +1283,7 @@ func (x *FunctionDecl) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FunctionDecl.ProtoReflect.Descriptor instead.
 func (*FunctionDecl) Descriptor() ([]byte, []int) {
-	return file_protowire_schema_v1_descriptor_proto_rawDescGZIP(), []int{10}
+	return file_protowire_schema_v1_descriptor_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *FunctionDecl) GetName() string {
@@ -1256,7 +1325,7 @@ type FunctionParam struct {
 
 func (x *FunctionParam) Reset() {
 	*x = FunctionParam{}
-	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[11]
+	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1268,7 +1337,7 @@ func (x *FunctionParam) String() string {
 func (*FunctionParam) ProtoMessage() {}
 
 func (x *FunctionParam) ProtoReflect() protoreflect.Message {
-	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[11]
+	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1281,7 +1350,7 @@ func (x *FunctionParam) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FunctionParam.ProtoReflect.Descriptor instead.
 func (*FunctionParam) Descriptor() ([]byte, []int) {
-	return file_protowire_schema_v1_descriptor_proto_rawDescGZIP(), []int{11}
+	return file_protowire_schema_v1_descriptor_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *FunctionParam) GetName() string {
@@ -1309,7 +1378,7 @@ type FileAnnotationDecls struct {
 
 func (x *FileAnnotationDecls) Reset() {
 	*x = FileAnnotationDecls{}
-	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[12]
+	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1321,7 +1390,7 @@ func (x *FileAnnotationDecls) String() string {
 func (*FileAnnotationDecls) ProtoMessage() {}
 
 func (x *FileAnnotationDecls) ProtoReflect() protoreflect.Message {
-	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[12]
+	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1334,7 +1403,7 @@ func (x *FileAnnotationDecls) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FileAnnotationDecls.ProtoReflect.Descriptor instead.
 func (*FileAnnotationDecls) Descriptor() ([]byte, []int) {
-	return file_protowire_schema_v1_descriptor_proto_rawDescGZIP(), []int{12}
+	return file_protowire_schema_v1_descriptor_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *FileAnnotationDecls) GetDeclarations() []*AnnotationDecl {
@@ -1355,7 +1424,7 @@ type AnnotationDecl struct {
 
 func (x *AnnotationDecl) Reset() {
 	*x = AnnotationDecl{}
-	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[13]
+	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1367,7 +1436,7 @@ func (x *AnnotationDecl) String() string {
 func (*AnnotationDecl) ProtoMessage() {}
 
 func (x *AnnotationDecl) ProtoReflect() protoreflect.Message {
-	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[13]
+	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1380,7 +1449,7 @@ func (x *AnnotationDecl) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AnnotationDecl.ProtoReflect.Descriptor instead.
 func (*AnnotationDecl) Descriptor() ([]byte, []int) {
-	return file_protowire_schema_v1_descriptor_proto_rawDescGZIP(), []int{13}
+	return file_protowire_schema_v1_descriptor_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *AnnotationDecl) GetName() string {
@@ -1418,7 +1487,7 @@ type AnnotationParam struct {
 
 func (x *AnnotationParam) Reset() {
 	*x = AnnotationParam{}
-	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[14]
+	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1430,7 +1499,7 @@ func (x *AnnotationParam) String() string {
 func (*AnnotationParam) ProtoMessage() {}
 
 func (x *AnnotationParam) ProtoReflect() protoreflect.Message {
-	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[14]
+	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1443,7 +1512,7 @@ func (x *AnnotationParam) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AnnotationParam.ProtoReflect.Descriptor instead.
 func (*AnnotationParam) Descriptor() ([]byte, []int) {
-	return file_protowire_schema_v1_descriptor_proto_rawDescGZIP(), []int{14}
+	return file_protowire_schema_v1_descriptor_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *AnnotationParam) GetName() string {
@@ -1489,7 +1558,7 @@ type FileTypeDecls struct {
 
 func (x *FileTypeDecls) Reset() {
 	*x = FileTypeDecls{}
-	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[15]
+	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1501,7 +1570,7 @@ func (x *FileTypeDecls) String() string {
 func (*FileTypeDecls) ProtoMessage() {}
 
 func (x *FileTypeDecls) ProtoReflect() protoreflect.Message {
-	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[15]
+	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1514,7 +1583,7 @@ func (x *FileTypeDecls) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FileTypeDecls.ProtoReflect.Descriptor instead.
 func (*FileTypeDecls) Descriptor() ([]byte, []int) {
-	return file_protowire_schema_v1_descriptor_proto_rawDescGZIP(), []int{15}
+	return file_protowire_schema_v1_descriptor_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *FileTypeDecls) GetDeclarations() []*TypeDecl {
@@ -1541,7 +1610,7 @@ type TypeDecl struct {
 
 func (x *TypeDecl) Reset() {
 	*x = TypeDecl{}
-	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[16]
+	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1553,7 +1622,7 @@ func (x *TypeDecl) String() string {
 func (*TypeDecl) ProtoMessage() {}
 
 func (x *TypeDecl) ProtoReflect() protoreflect.Message {
-	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[16]
+	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1566,7 +1635,7 @@ func (x *TypeDecl) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TypeDecl.ProtoReflect.Descriptor instead.
 func (*TypeDecl) Descriptor() ([]byte, []int) {
-	return file_protowire_schema_v1_descriptor_proto_rawDescGZIP(), []int{16}
+	return file_protowire_schema_v1_descriptor_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *TypeDecl) GetName() string {
@@ -1612,7 +1681,7 @@ type SourceMap struct {
 
 func (x *SourceMap) Reset() {
 	*x = SourceMap{}
-	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[17]
+	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1624,7 +1693,7 @@ func (x *SourceMap) String() string {
 func (*SourceMap) ProtoMessage() {}
 
 func (x *SourceMap) ProtoReflect() protoreflect.Message {
-	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[17]
+	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1637,7 +1706,7 @@ func (x *SourceMap) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SourceMap.ProtoReflect.Descriptor instead.
 func (*SourceMap) Descriptor() ([]byte, []int) {
-	return file_protowire_schema_v1_descriptor_proto_rawDescGZIP(), []int{17}
+	return file_protowire_schema_v1_descriptor_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *SourceMap) GetFile() string {
@@ -1690,7 +1759,7 @@ type SourceEntry struct {
 
 func (x *SourceEntry) Reset() {
 	*x = SourceEntry{}
-	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[18]
+	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1702,7 +1771,7 @@ func (x *SourceEntry) String() string {
 func (*SourceEntry) ProtoMessage() {}
 
 func (x *SourceEntry) ProtoReflect() protoreflect.Message {
-	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[18]
+	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1715,7 +1784,7 @@ func (x *SourceEntry) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SourceEntry.ProtoReflect.Descriptor instead.
 func (*SourceEntry) Descriptor() ([]byte, []int) {
-	return file_protowire_schema_v1_descriptor_proto_rawDescGZIP(), []int{18}
+	return file_protowire_schema_v1_descriptor_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *SourceEntry) GetKind() EntryKind {
@@ -1757,7 +1826,7 @@ type TypeChainLink struct {
 
 func (x *TypeChainLink) Reset() {
 	*x = TypeChainLink{}
-	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[19]
+	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1769,7 +1838,7 @@ func (x *TypeChainLink) String() string {
 func (*TypeChainLink) ProtoMessage() {}
 
 func (x *TypeChainLink) ProtoReflect() protoreflect.Message {
-	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[19]
+	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1782,7 +1851,7 @@ func (x *TypeChainLink) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TypeChainLink.ProtoReflect.Descriptor instead.
 func (*TypeChainLink) Descriptor() ([]byte, []int) {
-	return file_protowire_schema_v1_descriptor_proto_rawDescGZIP(), []int{19}
+	return file_protowire_schema_v1_descriptor_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *TypeChainLink) GetTypeFqn() string {
@@ -1813,7 +1882,7 @@ type SourceLocation struct {
 
 func (x *SourceLocation) Reset() {
 	*x = SourceLocation{}
-	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[20]
+	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1825,7 +1894,7 @@ func (x *SourceLocation) String() string {
 func (*SourceLocation) ProtoMessage() {}
 
 func (x *SourceLocation) ProtoReflect() protoreflect.Message {
-	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[20]
+	mi := &file_protowire_schema_v1_descriptor_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1838,7 +1907,7 @@ func (x *SourceLocation) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SourceLocation.ProtoReflect.Descriptor instead.
 func (*SourceLocation) Descriptor() ([]byte, []int) {
-	return file_protowire_schema_v1_descriptor_proto_rawDescGZIP(), []int{20}
+	return file_protowire_schema_v1_descriptor_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *SourceLocation) GetFile() string {
@@ -2073,12 +2142,17 @@ const file_protowire_schema_v1_descriptor_proto_rawDesc = "" +
 	"\rbig_int_value\x18\x10 \x01(\v2\v.pxf.BigIntH\x00R\vbigIntValue\x123\n" +
 	"\rdecimal_value\x18\x11 \x01(\v2\f.pxf.DecimalH\x00R\fdecimalValue\x127\n" +
 	"\x0fbig_float_value\x18\x12 \x01(\v2\r.pxf.BigFloatH\x00R\rbigFloatValueB\x06\n" +
-	"\x04kind\"\x9d\x01\n" +
+	"\x04kind\"\xe1\x01\n" +
 	"\n" +
 	"Expression\x12\x16\n" +
 	"\x06source\x18\x01 \x01(\tR\x06source\x126\n" +
 	"\x05calls\x18\x02 \x03(\v2 .protowire.schema.v1.FunctionRefR\x05calls\x12?\n" +
-	"\blocation\x18\x03 \x01(\v2#.protowire.schema.v1.SourceLocationR\blocation\"5\n" +
+	"\blocation\x18\x03 \x01(\v2#.protowire.schema.v1.SourceLocationR\blocation\x12B\n" +
+	"\venum_values\x18\x04 \x03(\v2!.protowire.schema.v1.EnumValueRefR\n" +
+	"enumValues\"b\n" +
+	"\fEnumValueRef\x12\x1a\n" +
+	"\bspelling\x18\x01 \x01(\tR\bspelling\x126\n" +
+	"\x05value\x18\x02 \x01(\v2 .protowire.schema.v1.EnumLiteralR\x05value\"5\n" +
 	"\vFunctionRef\x12\x10\n" +
 	"\x03fqn\x18\x01 \x01(\tR\x03fqn\x12\x14\n" +
 	"\x05arity\x18\x02 \x01(\x05R\x05arity\"V\n" +
@@ -2193,7 +2267,7 @@ func file_protowire_schema_v1_descriptor_proto_rawDescGZIP() []byte {
 }
 
 var file_protowire_schema_v1_descriptor_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_protowire_schema_v1_descriptor_proto_msgTypes = make([]protoimpl.MessageInfo, 22)
+var file_protowire_schema_v1_descriptor_proto_msgTypes = make([]protoimpl.MessageInfo, 23)
 var file_protowire_schema_v1_descriptor_proto_goTypes = []any{
 	(ParamType)(0),                        // 0: protowire.schema.v1.ParamType
 	(EntryKind)(0),                        // 1: protowire.schema.v1.EntryKind
@@ -2205,99 +2279,102 @@ var file_protowire_schema_v1_descriptor_proto_goTypes = []any{
 	(*ListLiteral)(nil),                   // 7: protowire.schema.v1.ListLiteral
 	(*LiteralValue)(nil),                  // 8: protowire.schema.v1.LiteralValue
 	(*Expression)(nil),                    // 9: protowire.schema.v1.Expression
-	(*FunctionRef)(nil),                   // 10: protowire.schema.v1.FunctionRef
-	(*FileFunctions)(nil),                 // 11: protowire.schema.v1.FileFunctions
-	(*FunctionDecl)(nil),                  // 12: protowire.schema.v1.FunctionDecl
-	(*FunctionParam)(nil),                 // 13: protowire.schema.v1.FunctionParam
-	(*FileAnnotationDecls)(nil),           // 14: protowire.schema.v1.FileAnnotationDecls
-	(*AnnotationDecl)(nil),                // 15: protowire.schema.v1.AnnotationDecl
-	(*AnnotationParam)(nil),               // 16: protowire.schema.v1.AnnotationParam
-	(*FileTypeDecls)(nil),                 // 17: protowire.schema.v1.FileTypeDecls
-	(*TypeDecl)(nil),                      // 18: protowire.schema.v1.TypeDecl
-	(*SourceMap)(nil),                     // 19: protowire.schema.v1.SourceMap
-	(*SourceEntry)(nil),                   // 20: protowire.schema.v1.SourceEntry
-	(*TypeChainLink)(nil),                 // 21: protowire.schema.v1.TypeChainLink
-	(*SourceLocation)(nil),                // 22: protowire.schema.v1.SourceLocation
-	nil,                                   // 23: protowire.schema.v1.FunctionDecl.OptionsEntry
-	(*pxf.BigInt)(nil),                    // 24: pxf.BigInt
-	(*pxf.Decimal)(nil),                   // 25: pxf.Decimal
-	(*pxf.BigFloat)(nil),                  // 26: pxf.BigFloat
-	(*anypb.Any)(nil),                     // 27: google.protobuf.Any
-	(*descriptorpb.FileOptions)(nil),      // 28: google.protobuf.FileOptions
-	(*descriptorpb.MessageOptions)(nil),   // 29: google.protobuf.MessageOptions
-	(*descriptorpb.FieldOptions)(nil),     // 30: google.protobuf.FieldOptions
-	(*descriptorpb.EnumOptions)(nil),      // 31: google.protobuf.EnumOptions
-	(*descriptorpb.EnumValueOptions)(nil), // 32: google.protobuf.EnumValueOptions
-	(*descriptorpb.ServiceOptions)(nil),   // 33: google.protobuf.ServiceOptions
-	(*descriptorpb.MethodOptions)(nil),    // 34: google.protobuf.MethodOptions
-	(*descriptorpb.OneofOptions)(nil),     // 35: google.protobuf.OneofOptions
+	(*EnumValueRef)(nil),                  // 10: protowire.schema.v1.EnumValueRef
+	(*FunctionRef)(nil),                   // 11: protowire.schema.v1.FunctionRef
+	(*FileFunctions)(nil),                 // 12: protowire.schema.v1.FileFunctions
+	(*FunctionDecl)(nil),                  // 13: protowire.schema.v1.FunctionDecl
+	(*FunctionParam)(nil),                 // 14: protowire.schema.v1.FunctionParam
+	(*FileAnnotationDecls)(nil),           // 15: protowire.schema.v1.FileAnnotationDecls
+	(*AnnotationDecl)(nil),                // 16: protowire.schema.v1.AnnotationDecl
+	(*AnnotationParam)(nil),               // 17: protowire.schema.v1.AnnotationParam
+	(*FileTypeDecls)(nil),                 // 18: protowire.schema.v1.FileTypeDecls
+	(*TypeDecl)(nil),                      // 19: protowire.schema.v1.TypeDecl
+	(*SourceMap)(nil),                     // 20: protowire.schema.v1.SourceMap
+	(*SourceEntry)(nil),                   // 21: protowire.schema.v1.SourceEntry
+	(*TypeChainLink)(nil),                 // 22: protowire.schema.v1.TypeChainLink
+	(*SourceLocation)(nil),                // 23: protowire.schema.v1.SourceLocation
+	nil,                                   // 24: protowire.schema.v1.FunctionDecl.OptionsEntry
+	(*pxf.BigInt)(nil),                    // 25: pxf.BigInt
+	(*pxf.Decimal)(nil),                   // 26: pxf.Decimal
+	(*pxf.BigFloat)(nil),                  // 27: pxf.BigFloat
+	(*anypb.Any)(nil),                     // 28: google.protobuf.Any
+	(*descriptorpb.FileOptions)(nil),      // 29: google.protobuf.FileOptions
+	(*descriptorpb.MessageOptions)(nil),   // 30: google.protobuf.MessageOptions
+	(*descriptorpb.FieldOptions)(nil),     // 31: google.protobuf.FieldOptions
+	(*descriptorpb.EnumOptions)(nil),      // 32: google.protobuf.EnumOptions
+	(*descriptorpb.EnumValueOptions)(nil), // 33: google.protobuf.EnumValueOptions
+	(*descriptorpb.ServiceOptions)(nil),   // 34: google.protobuf.ServiceOptions
+	(*descriptorpb.MethodOptions)(nil),    // 35: google.protobuf.MethodOptions
+	(*descriptorpb.OneofOptions)(nil),     // 36: google.protobuf.OneofOptions
 }
 var file_protowire_schema_v1_descriptor_proto_depIdxs = []int32{
 	3,  // 0: protowire.schema.v1.AnnotationList.entries:type_name -> protowire.schema.v1.Annotation
 	4,  // 1: protowire.schema.v1.Annotation.args:type_name -> protowire.schema.v1.AnnotationArg
-	22, // 2: protowire.schema.v1.Annotation.location:type_name -> protowire.schema.v1.SourceLocation
+	23, // 2: protowire.schema.v1.Annotation.location:type_name -> protowire.schema.v1.SourceLocation
 	5,  // 3: protowire.schema.v1.AnnotationArg.literal:type_name -> protowire.schema.v1.Literal
-	24, // 4: protowire.schema.v1.AnnotationArg.big_int_value:type_name -> pxf.BigInt
-	25, // 5: protowire.schema.v1.AnnotationArg.decimal_value:type_name -> pxf.Decimal
-	26, // 6: protowire.schema.v1.AnnotationArg.big_float_value:type_name -> pxf.BigFloat
+	25, // 4: protowire.schema.v1.AnnotationArg.big_int_value:type_name -> pxf.BigInt
+	26, // 5: protowire.schema.v1.AnnotationArg.decimal_value:type_name -> pxf.Decimal
+	27, // 6: protowire.schema.v1.AnnotationArg.big_float_value:type_name -> pxf.BigFloat
 	9,  // 7: protowire.schema.v1.AnnotationArg.expression:type_name -> protowire.schema.v1.Expression
 	6,  // 8: protowire.schema.v1.Literal.enum_value:type_name -> protowire.schema.v1.EnumLiteral
-	27, // 9: protowire.schema.v1.Literal.message:type_name -> google.protobuf.Any
+	28, // 9: protowire.schema.v1.Literal.message:type_name -> google.protobuf.Any
 	7,  // 10: protowire.schema.v1.Literal.list:type_name -> protowire.schema.v1.ListLiteral
 	8,  // 11: protowire.schema.v1.ListLiteral.elements:type_name -> protowire.schema.v1.LiteralValue
 	5,  // 12: protowire.schema.v1.LiteralValue.literal:type_name -> protowire.schema.v1.Literal
-	24, // 13: protowire.schema.v1.LiteralValue.big_int_value:type_name -> pxf.BigInt
-	25, // 14: protowire.schema.v1.LiteralValue.decimal_value:type_name -> pxf.Decimal
-	26, // 15: protowire.schema.v1.LiteralValue.big_float_value:type_name -> pxf.BigFloat
-	10, // 16: protowire.schema.v1.Expression.calls:type_name -> protowire.schema.v1.FunctionRef
-	22, // 17: protowire.schema.v1.Expression.location:type_name -> protowire.schema.v1.SourceLocation
-	12, // 18: protowire.schema.v1.FileFunctions.declarations:type_name -> protowire.schema.v1.FunctionDecl
-	13, // 19: protowire.schema.v1.FunctionDecl.params:type_name -> protowire.schema.v1.FunctionParam
-	23, // 20: protowire.schema.v1.FunctionDecl.options:type_name -> protowire.schema.v1.FunctionDecl.OptionsEntry
-	22, // 21: protowire.schema.v1.FunctionDecl.location:type_name -> protowire.schema.v1.SourceLocation
-	15, // 22: protowire.schema.v1.FileAnnotationDecls.declarations:type_name -> protowire.schema.v1.AnnotationDecl
-	16, // 23: protowire.schema.v1.AnnotationDecl.params:type_name -> protowire.schema.v1.AnnotationParam
-	22, // 24: protowire.schema.v1.AnnotationDecl.location:type_name -> protowire.schema.v1.SourceLocation
-	0,  // 25: protowire.schema.v1.AnnotationParam.type:type_name -> protowire.schema.v1.ParamType
-	4,  // 26: protowire.schema.v1.AnnotationParam.default_value:type_name -> protowire.schema.v1.AnnotationArg
-	18, // 27: protowire.schema.v1.FileTypeDecls.declarations:type_name -> protowire.schema.v1.TypeDecl
-	2,  // 28: protowire.schema.v1.TypeDecl.annotations:type_name -> protowire.schema.v1.AnnotationList
-	22, // 29: protowire.schema.v1.TypeDecl.location:type_name -> protowire.schema.v1.SourceLocation
-	20, // 30: protowire.schema.v1.SourceMap.entries:type_name -> protowire.schema.v1.SourceEntry
-	1,  // 31: protowire.schema.v1.SourceEntry.kind:type_name -> protowire.schema.v1.EntryKind
-	22, // 32: protowire.schema.v1.SourceEntry.source_location:type_name -> protowire.schema.v1.SourceLocation
-	21, // 33: protowire.schema.v1.SourceEntry.type_chain:type_name -> protowire.schema.v1.TypeChainLink
-	22, // 34: protowire.schema.v1.TypeChainLink.declaration_location:type_name -> protowire.schema.v1.SourceLocation
-	4,  // 35: protowire.schema.v1.FunctionDecl.OptionsEntry.value:type_name -> protowire.schema.v1.AnnotationArg
-	28, // 36: protowire.schema.v1.file_annotations:extendee -> google.protobuf.FileOptions
-	28, // 37: protowire.schema.v1.functions:extendee -> google.protobuf.FileOptions
-	28, // 38: protowire.schema.v1.annotation_decls:extendee -> google.protobuf.FileOptions
-	28, // 39: protowire.schema.v1.type_decls:extendee -> google.protobuf.FileOptions
-	28, // 40: protowire.schema.v1.source_map:extendee -> google.protobuf.FileOptions
-	29, // 41: protowire.schema.v1.message_annotations:extendee -> google.protobuf.MessageOptions
-	30, // 42: protowire.schema.v1.field_annotations:extendee -> google.protobuf.FieldOptions
-	31, // 43: protowire.schema.v1.enum_annotations:extendee -> google.protobuf.EnumOptions
-	32, // 44: protowire.schema.v1.enum_value_annotations:extendee -> google.protobuf.EnumValueOptions
-	33, // 45: protowire.schema.v1.service_annotations:extendee -> google.protobuf.ServiceOptions
-	34, // 46: protowire.schema.v1.method_annotations:extendee -> google.protobuf.MethodOptions
-	35, // 47: protowire.schema.v1.oneof_annotations:extendee -> google.protobuf.OneofOptions
-	2,  // 48: protowire.schema.v1.file_annotations:type_name -> protowire.schema.v1.AnnotationList
-	11, // 49: protowire.schema.v1.functions:type_name -> protowire.schema.v1.FileFunctions
-	14, // 50: protowire.schema.v1.annotation_decls:type_name -> protowire.schema.v1.FileAnnotationDecls
-	17, // 51: protowire.schema.v1.type_decls:type_name -> protowire.schema.v1.FileTypeDecls
-	19, // 52: protowire.schema.v1.source_map:type_name -> protowire.schema.v1.SourceMap
-	2,  // 53: protowire.schema.v1.message_annotations:type_name -> protowire.schema.v1.AnnotationList
-	2,  // 54: protowire.schema.v1.field_annotations:type_name -> protowire.schema.v1.AnnotationList
-	2,  // 55: protowire.schema.v1.enum_annotations:type_name -> protowire.schema.v1.AnnotationList
-	2,  // 56: protowire.schema.v1.enum_value_annotations:type_name -> protowire.schema.v1.AnnotationList
-	2,  // 57: protowire.schema.v1.service_annotations:type_name -> protowire.schema.v1.AnnotationList
-	2,  // 58: protowire.schema.v1.method_annotations:type_name -> protowire.schema.v1.AnnotationList
-	2,  // 59: protowire.schema.v1.oneof_annotations:type_name -> protowire.schema.v1.AnnotationList
-	60, // [60:60] is the sub-list for method output_type
-	60, // [60:60] is the sub-list for method input_type
-	48, // [48:60] is the sub-list for extension type_name
-	36, // [36:48] is the sub-list for extension extendee
-	0,  // [0:36] is the sub-list for field type_name
+	25, // 13: protowire.schema.v1.LiteralValue.big_int_value:type_name -> pxf.BigInt
+	26, // 14: protowire.schema.v1.LiteralValue.decimal_value:type_name -> pxf.Decimal
+	27, // 15: protowire.schema.v1.LiteralValue.big_float_value:type_name -> pxf.BigFloat
+	11, // 16: protowire.schema.v1.Expression.calls:type_name -> protowire.schema.v1.FunctionRef
+	23, // 17: protowire.schema.v1.Expression.location:type_name -> protowire.schema.v1.SourceLocation
+	10, // 18: protowire.schema.v1.Expression.enum_values:type_name -> protowire.schema.v1.EnumValueRef
+	6,  // 19: protowire.schema.v1.EnumValueRef.value:type_name -> protowire.schema.v1.EnumLiteral
+	13, // 20: protowire.schema.v1.FileFunctions.declarations:type_name -> protowire.schema.v1.FunctionDecl
+	14, // 21: protowire.schema.v1.FunctionDecl.params:type_name -> protowire.schema.v1.FunctionParam
+	24, // 22: protowire.schema.v1.FunctionDecl.options:type_name -> protowire.schema.v1.FunctionDecl.OptionsEntry
+	23, // 23: protowire.schema.v1.FunctionDecl.location:type_name -> protowire.schema.v1.SourceLocation
+	16, // 24: protowire.schema.v1.FileAnnotationDecls.declarations:type_name -> protowire.schema.v1.AnnotationDecl
+	17, // 25: protowire.schema.v1.AnnotationDecl.params:type_name -> protowire.schema.v1.AnnotationParam
+	23, // 26: protowire.schema.v1.AnnotationDecl.location:type_name -> protowire.schema.v1.SourceLocation
+	0,  // 27: protowire.schema.v1.AnnotationParam.type:type_name -> protowire.schema.v1.ParamType
+	4,  // 28: protowire.schema.v1.AnnotationParam.default_value:type_name -> protowire.schema.v1.AnnotationArg
+	19, // 29: protowire.schema.v1.FileTypeDecls.declarations:type_name -> protowire.schema.v1.TypeDecl
+	2,  // 30: protowire.schema.v1.TypeDecl.annotations:type_name -> protowire.schema.v1.AnnotationList
+	23, // 31: protowire.schema.v1.TypeDecl.location:type_name -> protowire.schema.v1.SourceLocation
+	21, // 32: protowire.schema.v1.SourceMap.entries:type_name -> protowire.schema.v1.SourceEntry
+	1,  // 33: protowire.schema.v1.SourceEntry.kind:type_name -> protowire.schema.v1.EntryKind
+	23, // 34: protowire.schema.v1.SourceEntry.source_location:type_name -> protowire.schema.v1.SourceLocation
+	22, // 35: protowire.schema.v1.SourceEntry.type_chain:type_name -> protowire.schema.v1.TypeChainLink
+	23, // 36: protowire.schema.v1.TypeChainLink.declaration_location:type_name -> protowire.schema.v1.SourceLocation
+	4,  // 37: protowire.schema.v1.FunctionDecl.OptionsEntry.value:type_name -> protowire.schema.v1.AnnotationArg
+	29, // 38: protowire.schema.v1.file_annotations:extendee -> google.protobuf.FileOptions
+	29, // 39: protowire.schema.v1.functions:extendee -> google.protobuf.FileOptions
+	29, // 40: protowire.schema.v1.annotation_decls:extendee -> google.protobuf.FileOptions
+	29, // 41: protowire.schema.v1.type_decls:extendee -> google.protobuf.FileOptions
+	29, // 42: protowire.schema.v1.source_map:extendee -> google.protobuf.FileOptions
+	30, // 43: protowire.schema.v1.message_annotations:extendee -> google.protobuf.MessageOptions
+	31, // 44: protowire.schema.v1.field_annotations:extendee -> google.protobuf.FieldOptions
+	32, // 45: protowire.schema.v1.enum_annotations:extendee -> google.protobuf.EnumOptions
+	33, // 46: protowire.schema.v1.enum_value_annotations:extendee -> google.protobuf.EnumValueOptions
+	34, // 47: protowire.schema.v1.service_annotations:extendee -> google.protobuf.ServiceOptions
+	35, // 48: protowire.schema.v1.method_annotations:extendee -> google.protobuf.MethodOptions
+	36, // 49: protowire.schema.v1.oneof_annotations:extendee -> google.protobuf.OneofOptions
+	2,  // 50: protowire.schema.v1.file_annotations:type_name -> protowire.schema.v1.AnnotationList
+	12, // 51: protowire.schema.v1.functions:type_name -> protowire.schema.v1.FileFunctions
+	15, // 52: protowire.schema.v1.annotation_decls:type_name -> protowire.schema.v1.FileAnnotationDecls
+	18, // 53: protowire.schema.v1.type_decls:type_name -> protowire.schema.v1.FileTypeDecls
+	20, // 54: protowire.schema.v1.source_map:type_name -> protowire.schema.v1.SourceMap
+	2,  // 55: protowire.schema.v1.message_annotations:type_name -> protowire.schema.v1.AnnotationList
+	2,  // 56: protowire.schema.v1.field_annotations:type_name -> protowire.schema.v1.AnnotationList
+	2,  // 57: protowire.schema.v1.enum_annotations:type_name -> protowire.schema.v1.AnnotationList
+	2,  // 58: protowire.schema.v1.enum_value_annotations:type_name -> protowire.schema.v1.AnnotationList
+	2,  // 59: protowire.schema.v1.service_annotations:type_name -> protowire.schema.v1.AnnotationList
+	2,  // 60: protowire.schema.v1.method_annotations:type_name -> protowire.schema.v1.AnnotationList
+	2,  // 61: protowire.schema.v1.oneof_annotations:type_name -> protowire.schema.v1.AnnotationList
+	62, // [62:62] is the sub-list for method output_type
+	62, // [62:62] is the sub-list for method input_type
+	50, // [50:62] is the sub-list for extension type_name
+	38, // [38:50] is the sub-list for extension extendee
+	0,  // [0:38] is the sub-list for field type_name
 }
 
 func init() { file_protowire_schema_v1_descriptor_proto_init() }
@@ -2339,7 +2416,7 @@ func file_protowire_schema_v1_descriptor_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_protowire_schema_v1_descriptor_proto_rawDesc), len(file_protowire_schema_v1_descriptor_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   22,
+			NumMessages:   23,
 			NumExtensions: 12,
 			NumServices:   0,
 		},
