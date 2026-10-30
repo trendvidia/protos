@@ -14,18 +14,22 @@ import (
 )
 
 // Files lists every shared schema, each with the language options it
-// must carry.
+// must carry. The Java and C# names are the ones protowire-java and
+// protowire-csharp already publish, so a port that vendors these files
+// keeps its class names; an empty JavaOuterClassname means the option is
+// unset, which keeps protoc's default outer class (pxf.Annotations, as
+// protowire-java names it).
 var Files = []struct {
 	Path, GoPackage, JavaPackage, JavaOuterClassname, CsharpNamespace string
 }{
-	{"envelope/v1/envelope.proto", "github.com/trendvidia/protos/envelope/v1;envelopev1", "org.protowire.protos.envelope.v1", "EnvelopeProto", "Protowire.Protos.Envelope.V1"},
-	{"protowire/schema/v1/annotations.proto", "github.com/trendvidia/protos/protowire/schema/v1;schemav1", "org.protowire.protos.schema.v1", "AnnotationsProto", "Protowire.Protos.Schema.V1"},
-	{"protowire/schema/v1/descriptor.proto", "github.com/trendvidia/protos/protowire/schema/v1;schemav1", "org.protowire.protos.schema.v1", "DescriptorProto", "Protowire.Protos.Schema.V1"},
-	{"protowire/schema/v1/report.proto", "github.com/trendvidia/protos/protowire/schema/v1;schemav1", "org.protowire.protos.schema.v1", "ReportProto", "Protowire.Protos.Schema.V1"},
-	{"pxf/annotations.proto", "github.com/trendvidia/protos/pxf;pxf", "org.protowire.protos.pxf", "AnnotationsProto", "Protowire.Protos.Pxf"},
-	{"pxf/bignum.proto", "github.com/trendvidia/protos/pxf;pxf", "org.protowire.protos.pxf", "BignumProto", "Protowire.Protos.Pxf"},
-	{"pxf/secret.proto", "github.com/trendvidia/protos/pxf;pxf", "org.protowire.protos.pxf", "SecretProto", "Protowire.Protos.Pxf"},
-	{"sbe/annotations.proto", "github.com/trendvidia/protos/sbe;sbe", "org.protowire.protos.sbe", "AnnotationsProto", "Protowire.Protos.Sbe"},
+	{"envelope/v1/envelope.proto", "github.com/trendvidia/protos/envelope/v1;envelopev1", "org.protowire.envelope.v1", "", "Protowire.Envelopes.V1"},
+	{"protowire/schema/v1/annotations.proto", "github.com/trendvidia/protos/protowire/schema/v1;schemav1", "org.protowire.proto.schema.v1", "", "Protowire.Schema.V1"},
+	{"protowire/schema/v1/descriptor.proto", "github.com/trendvidia/protos/protowire/schema/v1;schemav1", "org.protowire.proto.schema.v1", "", "Protowire.Schema.V1"},
+	{"protowire/schema/v1/report.proto", "github.com/trendvidia/protos/protowire/schema/v1;schemav1", "org.protowire.proto.schema.v1", "", "Protowire.Schema.V1"},
+	{"pxf/annotations.proto", "github.com/trendvidia/protos/pxf;pxf", "org.protowire.proto.pxf", "", "Protowire.Pxf"},
+	{"pxf/bignum.proto", "github.com/trendvidia/protos/pxf;pxf", "org.protowire.proto.pxf", "", "Protowire.Pxf"},
+	{"pxf/secret.proto", "github.com/trendvidia/protos/pxf;pxf", "org.protowire.proto.pxf", "", "Protowire.Pxf"},
+	{"sbe/annotations.proto", "github.com/trendvidia/protos/sbe;sbe", "org.protowire.proto.sbe", "", "Protowire.Sbe"},
 }
 
 // Closure returns fd and every file it imports, transitively, the way

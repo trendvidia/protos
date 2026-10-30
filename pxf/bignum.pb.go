@@ -232,8 +232,8 @@ const file_pxf_bignum_proto_rawDesc = "" +
 	"\bmantissa\x18\x01 \x01(\fR\bmantissa\x12\x1a\n" +
 	"\bexponent\x18\x02 \x01(\x05R\bexponent\x12\x12\n" +
 	"\x04prec\x18\x03 \x01(\rR\x04prec\x12\x1a\n" +
-	"\bnegative\x18\x04 \x01(\bR\bnegativeBf\n" +
-	"\x18org.protowire.protos.pxfB\vBignumProtoP\x01Z$github.com/trendvidia/protos/pxf;pxf\xaa\x02\x14Protowire.Protos.Pxfb\x06proto3"
+	"\bnegative\x18\x04 \x01(\bR\bnegativeBQ\n" +
+	"\x17org.protowire.proto.pxfP\x01Z$github.com/trendvidia/protos/pxf;pxf\xaa\x02\rProtowire.Pxfb\x06proto3"
 
 var (
 	file_pxf_bignum_proto_rawDescOnce sync.Once

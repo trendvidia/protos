@@ -118,8 +118,8 @@ const file_pxf_secret_proto_rawDesc = "" +
 	"\x06Secret\x12\x14\n" +
 	"\x05value\x18\x01 \x01(\tR\x05value\x12\x12\n" +
 	"\x04hint\x18\x02 \x01(\tR\x04hint\x12 \n" +
-	"\vfingerprint\x18\x03 \x01(\tR\vfingerprintBf\n" +
-	"\x18org.protowire.protos.pxfB\vSecretProtoP\x01Z$github.com/trendvidia/protos/pxf;pxf\xaa\x02\x14Protowire.Protos.Pxfb\x06proto3"
+	"\vfingerprint\x18\x03 \x01(\tR\vfingerprintBQ\n" +
+	"\x17org.protowire.proto.pxfP\x01Z$github.com/trendvidia/protos/pxf;pxf\xaa\x02\rProtowire.Pxfb\x06proto3"
 
 var (
 	file_pxf_secret_proto_rawDescOnce sync.Once

@@ -6,10 +6,12 @@ If your schema imports one of these files, the code you generate from it refers 
 
 | File | Go package | Java package | C# namespace |
 |---|---|---|---|
-| `pxf/annotations.proto`, `pxf/bignum.proto`, `pxf/secret.proto` | `github.com/trendvidia/protos/pxf` | `org.protowire.protos.pxf` | `Protowire.Protos.Pxf` |
-| `sbe/annotations.proto` | `github.com/trendvidia/protos/sbe` | `org.protowire.protos.sbe` | `Protowire.Protos.Sbe` |
-| `envelope/v1/envelope.proto` | `github.com/trendvidia/protos/envelope/v1` | `org.protowire.protos.envelope.v1` | `Protowire.Protos.Envelope.V1` |
-| `protowire/schema/v1/*.proto` | `github.com/trendvidia/protos/protowire/schema/v1` | `org.protowire.protos.schema.v1` | `Protowire.Protos.Schema.V1` |
+| `pxf/annotations.proto`, `pxf/bignum.proto`, `pxf/secret.proto` | `github.com/trendvidia/protos/pxf` | `org.protowire.proto.pxf` | `Protowire.Pxf` |
+| `sbe/annotations.proto` | `github.com/trendvidia/protos/sbe` | `org.protowire.proto.sbe` | `Protowire.Sbe` |
+| `envelope/v1/envelope.proto` | `github.com/trendvidia/protos/envelope/v1` | `org.protowire.envelope.v1` | `Protowire.Envelopes.V1` |
+| `protowire/schema/v1/*.proto` | `github.com/trendvidia/protos/protowire/schema/v1` | `org.protowire.proto.schema.v1` | `Protowire.Schema.V1` |
+
+The Java and C# names are the ones protowire-java and protowire-csharp already publish, so a port that copies these files keeps its class names. `java_outer_classname` is left unset, so the outer class keeps protoc's default name (`Annotations`, `Bignum`).
 
 Swift, TypeScript, C++, Rust, Python and Dart have no per-file package option. Their names come from the proto package or the file path.
 

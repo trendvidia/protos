@@ -2251,8 +2251,8 @@ const file_protowire_schema_v1_descriptor_proto_rawDesc = "" +
 	"\x12method_annotations\x12\x1e.google.protobuf.MethodOptions\x18\xaf\n" +
 	" \x01(\v2#.protowire.schema.v1.AnnotationListR\x11methodAnnotations:p\n" +
 	"\x11oneof_annotations\x12\x1d.google.protobuf.OneofOptions\x18\xaf\n" +
-	" \x01(\v2#.protowire.schema.v1.AnnotationListR\x10oneofAnnotationsB\x8b\x01\n" +
-	"\x1eorg.protowire.protos.schema.v1B\x0fDescriptorProtoP\x01Z9github.com/trendvidia/protos/protowire/schema/v1;schemav1\xaa\x02\x1aProtowire.Protos.Schema.V1b\x06proto3"
+	" \x01(\v2#.protowire.schema.v1.AnnotationListR\x10oneofAnnotationsBr\n" +
+	"\x1dorg.protowire.proto.schema.v1P\x01Z9github.com/trendvidia/protos/protowire/schema/v1;schemav1\xaa\x02\x13Protowire.Schema.V1b\x06proto3"
 
 var (
 	file_protowire_schema_v1_descriptor_proto_rawDescOnce sync.Once

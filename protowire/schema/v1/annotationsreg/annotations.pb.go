@@ -47,41 +47,41 @@ var File_protowire_schema_v1_annotations_proto protoreflect.FileDescriptor
 
 const file_protowire_schema_v1_annotations_proto_rawDesc = "" +
 	"\n" +
-	"%protowire/schema/v1/annotations.proto\x12\x13protowire.schema.v1B\x9d\b\n" +
-	"\x1eorg.protowire.protos.schema.v1B\x10AnnotationsProtoP\x01Z9github.com/trendvidia/protos/protowire/schema/v1;schemav1\xaa\x02\x1aProtowire.Protos.Schema.V1\x8aS\x8d\a\n" +
+	"%protowire/schema/v1/annotations.proto\x12\x13protowire.schema.v1B\x83\b\n" +
+	"\x1dorg.protowire.proto.schema.v1P\x01Z9github.com/trendvidia/protos/protowire/schema/v1;schemav1\xaa\x02\x13Protowire.Schema.V1\x8aS\x8d\a\n" +
 	"t\n" +
 	"\x1cprotowire.schema.v1.validate\x12\b\n" +
 	"\x04rule\x10\x01\x12\f\n" +
 	"\x04code\x10\x02\"\x02R\x00\x12\x0f\n" +
 	"\amessage\x10\x02\"\x02R\x00\x1a+\n" +
-	"%protowire/schema/v1/annotations.proto\x104\x18\f\n" +
+	"%protowire/schema/v1/annotations.proto\x103\x18\f\n" +
 	"K\n" +
 	"\x1cprotowire.schema.v1.required\x1a+\n" +
-	"%protowire/schema/v1/annotations.proto\x10C\x18\f\n" +
+	"%protowire/schema/v1/annotations.proto\x10B\x18\f\n" +
 	"U\n" +
 	"\x1bprotowire.schema.v1.default\x12\t\n" +
 	"\x05value\x10\t\x1a+\n" +
-	"%protowire/schema/v1/annotations.proto\x10Q\x18\f\n" +
+	"%protowire/schema/v1/annotations.proto\x10P\x18\f\n" +
 	"X\n" +
 	"\x1fprotowire.schema.v1.description\x12\b\n" +
 	"\x04text\x10\x02\x1a+\n" +
-	"%protowire/schema/v1/annotations.proto\x10W\x18\f\n" +
+	"%protowire/schema/v1/annotations.proto\x10V\x18\f\n" +
 	"U\n" +
 	"\x1bprotowire.schema.v1.example\x12\t\n" +
 	"\x05value\x10\t\x1a+\n" +
-	"%protowire/schema/v1/annotations.proto\x10`\x18\f\n" +
+	"%protowire/schema/v1/annotations.proto\x10_\x18\f\n" +
 	"W\n" +
 	"\x1eprotowire.schema.v1.error_code\x12\b\n" +
 	"\x04code\x10\x02\x1a+\n" +
-	"%protowire/schema/v1/annotations.proto\x10f\x18\f\n" +
+	"%protowire/schema/v1/annotations.proto\x10e\x18\f\n" +
 	"]\n" +
 	"\x1eprotowire.schema.v1.deprecated\x12\x0e\n" +
 	"\x06reason\x10\x02\"\x02R\x00\x1a+\n" +
-	"%protowire/schema/v1/annotations.proto\x10l\x18\f\n" +
+	"%protowire/schema/v1/annotations.proto\x10k\x18\f\n" +
 	"\\\n" +
 	"\x1dprotowire.schema.v1.sensitive\x12\r\n" +
 	"\x05class\x10\x02\"\x02R\x00\x1a,\n" +
-	"%protowire/schema/v1/annotations.proto\x10\x87\x01\x18\f\n" +
+	"%protowire/schema/v1/annotations.proto\x10\x86\x01\x18\f\n" +
 	"\xa9\x01\n" +
 	"\x18protowire.schema.v1.http\x12\n" +
 	"\n" +
@@ -91,7 +91,7 @@ const file_protowire_schema_v1_annotations_proto_rawDesc = "" +
 	"\foperation_id\x10\x02\"\x02R\x00\x12\x0e\n" +
 	"\x04tags\x10\t\"\x04z\x02\x1a\x00\x12\x12\n" +
 	"\bsecurity\x10\t\"\x04z\x02\x1a\x00\x1a,\n" +
-	"%protowire/schema/v1/annotations.proto\x10\xc8\x01\x18\fb\x06proto3"
+	"%protowire/schema/v1/annotations.proto\x10\xc7\x01\x18\fb\x06proto3"
 
 var file_protowire_schema_v1_annotations_proto_goTypes = []any{}
 var file_protowire_schema_v1_annotations_proto_depIdxs = []int32{
