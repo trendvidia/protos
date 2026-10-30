@@ -25,6 +25,12 @@ gRPC server reflection does need it registered. Without it, a reflection client 
 import _ "github.com/trendvidia/protos/protowire/schema/v1/annotationsreg"
 ```
 
+## Buf Schema Registry
+
+The schemas are on the BSR as [`buf.build/trendvidia/protos`](https://buf.build/trendvidia/protos), labelled with each release tag, except `protowire/schema/v1/annotations.proto`: stock buf cannot compile its v1.2 syntax. Nothing else here imports it, and `pxf build` bundles its own copy.
+
+Push a release with `scripts/push-bsr.sh <tag>`. `--check` builds the module and pushes nothing.
+
 ## Regenerating
 
 ```bash
