@@ -32,6 +32,8 @@ buf build "$work" -o /dev/null
 (cd "$work" && buf ls-files)
 
 if [ "$label" != "--check" ]; then
-  (cd "$work" && buf push --label "$label" \
+  # main is the module's default label: without it, a reference with no label
+  # (a plain deps entry in buf.yaml) fails with "no commits in the default label".
+  (cd "$work" && buf push --label "$label" --label main \
     --source-control-url "https://github.com/trendvidia/protos/tree/$label")
 fi
