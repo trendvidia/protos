@@ -1130,8 +1130,8 @@ const file_protowire_schema_v1_report_proto_rawDesc = "" +
 	"\x19RULE_KIND_TYPE_REFINEMENT\x10\x04*\x1b\n" +
 	"\tNullValue\x12\x0e\n" +
 	"\n" +
-	"NULL_VALUE\x10\x00B\x87\x01\n" +
-	"\x1eorg.protowire.protos.schema.v1B\vReportProtoP\x01Z9github.com/trendvidia/protos/protowire/schema/v1;schemav1\xaa\x02\x1aProtowire.Protos.Schema.V1b\x06proto3"
+	"NULL_VALUE\x10\x00Br\n" +
+	"\x1dorg.protowire.proto.schema.v1P\x01Z9github.com/trendvidia/protos/protowire/schema/v1;schemav1\xaa\x02\x13Protowire.Schema.V1b\x06proto3"
 
 var (
 	file_protowire_schema_v1_report_proto_rawDescOnce sync.Once

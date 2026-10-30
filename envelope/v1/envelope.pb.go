@@ -314,8 +314,8 @@ const file_envelope_v1_envelope_proto_rawDesc = "" +
 	"\x05field\x18\x01 \x01(\tR\x05field\x12\x12\n" +
 	"\x04code\x18\x02 \x01(\tR\x04code\x12\x18\n" +
 	"\amessage\x18\x03 \x01(\tR\amessage\x12\x12\n" +
-	"\x04args\x18\x04 \x03(\tR\x04argsB\x87\x01\n" +
-	" org.protowire.protos.envelope.v1B\rEnvelopeProtoP\x01Z3github.com/trendvidia/protos/envelope/v1;envelopev1\xaa\x02\x1cProtowire.Protos.Envelope.V1b\x06proto3"
+	"\x04args\x18\x04 \x03(\tR\x04argsBk\n" +
+	"\x19org.protowire.envelope.v1P\x01Z3github.com/trendvidia/protos/envelope/v1;envelopev1\xaa\x02\x16Protowire.Envelopes.V1b\x06proto3"
 
 var (
 	file_envelope_v1_envelope_proto_rawDescOnce sync.Once

@@ -83,8 +83,8 @@ const file_pxf_annotations_proto_rawDesc = "" +
 	"\adefault\x12\x1d.google.protobuf.FieldOptions\x18\xa3\n" +
 	" \x01(\tR\adefault:0\n" +
 	"\x03key\x12\x1d.google.protobuf.FieldOptions\x18\xa4\n" +
-	" \x01(\tR\x03keyBk\n" +
-	"\x18org.protowire.protos.pxfB\x10AnnotationsProtoP\x01Z$github.com/trendvidia/protos/pxf;pxf\xaa\x02\x14Protowire.Protos.Pxfb\x06proto3"
+	" \x01(\tR\x03keyBQ\n" +
+	"\x17org.protowire.proto.pxfP\x01Z$github.com/trendvidia/protos/pxf;pxf\xaa\x02\rProtowire.Pxfb\x06proto3"
 
 var file_pxf_annotations_proto_goTypes = []any{
 	(*descriptorpb.FieldOptions)(nil), // 0: google.protobuf.FieldOptions

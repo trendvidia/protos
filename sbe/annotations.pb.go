@@ -117,8 +117,8 @@ const file_sbe_annotations_proto_rawDesc = "" +
 	"\x06length\x12\x1d.google.protobuf.FieldOptions\x18\xaa\n" +
 	" \x01(\rR\x06length::\n" +
 	"\bencoding\x12\x1d.google.protobuf.FieldOptions\x18\xab\n" +
-	" \x01(\tR\bencodingBk\n" +
-	"\x18org.protowire.protos.sbeB\x10AnnotationsProtoP\x01Z$github.com/trendvidia/protos/sbe;sbe\xaa\x02\x14Protowire.Protos.Sbeb\x06proto3"
+	" \x01(\tR\bencodingBQ\n" +
+	"\x17org.protowire.proto.sbeP\x01Z$github.com/trendvidia/protos/sbe;sbe\xaa\x02\rProtowire.Sbeb\x06proto3"
 
 var file_sbe_annotations_proto_goTypes = []any{
 	(*descriptorpb.FileOptions)(nil),    // 0: google.protobuf.FileOptions
